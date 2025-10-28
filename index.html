@@ -1,14 +1,508 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boostar - Official Website</title>
+
+<style>
+/* ───────────────── 共通リセット ───────────────── */
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Arial',sans-serif;}
+body{background:#000;color:#fff;overflow-x:hidden;}
+
+/* ───────────────── ナビゲーション ───────────────── */
+nav{position:fixed;top:0;width:100%;padding:1rem 2rem;
+     background:rgba(0,0,0,.9);backdrop-filter:blur(10px);z-index:1000;}
+.nav-container{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;}
+.logo{font-size:2rem;font-weight:bold;
+      background:linear-gradient(45deg,#ff6b6b,#4ecdc4,#45b7d1);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:glow 3s ease-in-out infinite alternate;}
+.nav-links{display:flex;list-style:none;gap:2rem;}
+.nav-links a{color:#fff;text-decoration:none;position:relative;transition:.3s;}
+.nav-links a:hover{color:#4ecdc4;transform:translateY(-2px);}
+.nav-links a::after{content:'';position:absolute;bottom:-5px;left:0;width:0;height:2px;
+                    background:linear-gradient(45deg,#ff6b6b,#4ecdc4);transition:.3s;}
+.nav-links a:hover::after{width:100%;}
+
+/* ───────────────── ヒーロー ───────────────── */
+.hero{height:100vh;display:flex;align-items:center;justify-content:center;position:relative;
+      background:radial-gradient(circle at 50% 50%,rgba(78,205,196,.1) 0%,transparent 70%),#110022;}
+.floating-shapes{position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;z-index:1;}
+.shape{position:absolute;border-radius:50%;animation:float 6s ease-in-out infinite;}
+.shape:nth-child(1){width:100px;height:100px;background:rgba(255,107,107,.1);top:20%;left:10%;animation-delay:0s;}
+.shape:nth-child(2){width:150px;height:150px;background:rgba(78,205,196,.1);top:60%;right:10%;animation-delay:2s;}
+.shape:nth-child(3){width:80px;height:80px;background:rgba(69,183,209,.1);bottom:20%;left:20%;animation-delay:4s;}
+
+.hero-content{text-align:center;z-index:2;}
+.hero h1{font-size:5rem;margin-bottom:1rem;
+         background:linear-gradient(45deg,#ff6b6b,#4ecdc4,#45b7d1,#f9ca24);
+         -webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:pulse 2s ease-in-out infinite;}
+.hero p{font-size:1.5rem;margin-bottom:2rem;opacity:.8;}
+.cta-button{display:inline-block;background:linear-gradient(45deg,#ff6b6b,#4ecdc4);
+            padding:1rem 2rem;border:none;border-radius:50px;color:#fff;font-size:1.2rem;
+            cursor:pointer;text-decoration:none;transition:.3s;}
+.cta-button:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(78,205,196,.3);}
+
+/* ───────────────── セクション共通 ───────────────── */
+.section{padding:5rem 2rem;max-width:1200px;margin:0 auto;}
+.section h2{font-size:3rem;margin-bottom:2rem;text-align:center;
+            background:linear-gradient(45deg,#ff6b6b,#4ecdc4);
+            -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+
+/* ① セクションごとに背景色を少しずつ明るく */
+#about{background:#120026;}
+#members{background:#17002f;}
+#music{background:#1c0036;}
+#contact{background:#210040;}
+
+/* ───────────────── Members ───────────────── */
+.members-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2rem;margin-top:3rem;}
+.member-card{background:rgba(255,255,255,.05);padding:2rem;border-radius:20px;
+             border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(10px);text-align:center;transition:.3s;}
+.member-card:hover{transform:translateY(-10px);box-shadow:0 20px 40px rgba(78,205,196,.2);}
+.member-avatar{width:160px;height:160px;border-radius:50%;
+               background:linear-gradient(135deg,#2d2d2d,#1a1a1a);
+               margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;
+               overflow:visible;position:relative;}
+.member-role{color:#4ecdc4;font-size:0.9rem;text-transform:uppercase;letter-spacing:2px;margin-bottom:0.5rem;}
+
+/* ───────────────── Character Avatars ───────────────── */
+/* Red Cow - BULL */
+.red-cow{position:relative;transform:scale(0.7);}
+.red-cow .head{width:100px;height:120px;background:linear-gradient(135deg,#c44e3a 0%,#d67059 100%);
+               border-radius:50% 50% 45% 45%;position:relative;}
+.red-cow .mohawk{position:absolute;width:50px;height:60px;background:#dc3545;top:-30px;left:25px;
+                 clip-path:polygon(50% 0%,0% 100%,25% 80%,50% 100%,75% 80%,100% 100%);}
+.red-cow .horn{position:absolute;width:12px;height:25px;background:linear-gradient(135deg,#f5f5dc,#e6d7b8);
+               border-radius:6px 6px 0 0;top:-8px;}
+.red-cow .horn.left{left:8px;}
+.red-cow .horn.right{right:8px;}
+.red-cow .ear{position:absolute;width:25px;height:35px;background:inherit;border-radius:50%;
+              top:35px;filter:brightness(0.9);}
+.red-cow .ear.left{left:-8px;transform:rotate(-15deg);}
+.red-cow .ear.right{right:-8px;transform:rotate(15deg);}
+.red-cow .eye{position:absolute;width:15px;height:15px;background:white;border-radius:50%;top:50px;}
+.red-cow .eye.left{left:20px;}
+.red-cow .eye.right{right:20px;}
+.red-cow .pupil{position:absolute;width:8px;height:8px;background:#1a1a1a;border-radius:50%;top:3px;left:3px;}
+.red-cow .nose{position:absolute;width:20px;height:15px;background:#2d2d2d;border-radius:50%;bottom:25px;left:40px;}
+.red-cow .jacket{width:85px;height:80px;background:#1a1a1a;margin:-8px auto 0;border-radius:8px 8px 0 0;
+                 position:relative;border:2px solid #333;}
+
+/* Holstein - SPOTS */
+.holstein{position:relative;transform:scale(0.7);}
+.holstein .head{width:100px;height:120px;background:#f5f5f5;border-radius:50% 50% 45% 45%;position:relative;}
+.holstein .spot{position:absolute;background:#1a1a1a;border-radius:50%;}
+.holstein .spot1{width:30px;height:25px;top:15px;left:8px;}
+.holstein .spot2{width:25px;height:30px;top:20px;right:12px;}
+.holstein .spot3{width:20px;height:15px;top:60px;left:15px;}
+.holstein .glasses{position:absolute;width:65px;height:25px;top:45px;left:17px;}
+.holstein .lens{position:absolute;width:22px;height:22px;border:2px solid #2d2d2d;border-radius:50%;
+                background:rgba(135,206,250,.2);}
+.holstein .lens.left{left:0;}
+.holstein .lens.right{right:0;}
+.holstein .bridge{position:absolute;width:15px;height:2px;background:#2d2d2d;top:10px;left:25px;}
+.holstein .ear{position:absolute;width:25px;height:35px;background:inherit;border-radius:50%;
+               top:35px;filter:brightness(0.9);}
+.holstein .ear.left{left:-8px;transform:rotate(-15deg);}
+.holstein .ear.right{right:-8px;transform:rotate(15deg);}
+.holstein .eye{position:absolute;width:15px;height:15px;background:white;border-radius:50%;top:50px;}
+.holstein .eye.left{left:20px;}
+.holstein .eye.right{right:20px;}
+.holstein .pupil{position:absolute;width:8px;height:8px;background:#1a1a1a;border-radius:50%;top:3px;left:3px;}
+.holstein .nose{position:absolute;width:20px;height:15px;background:#2d2d2d;border-radius:50%;bottom:25px;left:40px;}
+.holstein .cardigan{width:90px;height:80px;background:#8b7355;margin:-8px auto 0;border-radius:8px 8px 0 0;position:relative;}
+.holstein .button{position:absolute;width:6px;height:6px;background:#5a4a3a;border-radius:50%;left:50%;transform:translateX(-50%);}
+.holstein .button1{top:20px;}
+.holstein .button2{top:35px;}
+
+/* Black Sheep - SHADOW */
+.black-sheep{position:relative;transform:scale(0.7);}
+.black-sheep .head{width:100px;height:110px;background:#1a1a1a;border-radius:50%;position:relative;}
+.black-sheep .wool{position:absolute;width:20px;height:20px;background:#0a0a0a;border-radius:50%;}
+.black-sheep .wool1{top:-4px;left:8px;}
+.black-sheep .wool2{top:-6px;left:33px;}
+.black-sheep .wool3{top:-4px;right:8px;}
+.black-sheep .wool4{top:12px;left:-4px;}
+.black-sheep .wool5{top:12px;right:-4px;}
+.black-sheep .ear{position:absolute;width:25px;height:35px;background:inherit;border-radius:50%;
+                  top:30px;filter:brightness(0.9);}
+.black-sheep .ear.left{left:-8px;transform:rotate(-15deg);}
+.black-sheep .ear.right{right:-8px;transform:rotate(15deg);}
+.black-sheep .eye{position:absolute;width:15px;height:15px;background:white;border-radius:50%;top:45px;}
+.black-sheep .eye.left{left:20px;}
+.black-sheep .eye.right{right:20px;}
+.black-sheep .pupil{position:absolute;width:8px;height:8px;background:#1a1a1a;border-radius:50%;top:3px;left:3px;}
+.black-sheep .nose{position:absolute;width:20px;height:15px;background:#2d2d2d;border-radius:50%;bottom:25px;left:40px;}
+.black-sheep .hoodie{width:92px;height:85px;background:#2d2d2d;margin:-8px auto 0;border-radius:12px 12px 0 0;position:relative;}
+.black-sheep .hood{position:absolute;width:80px;height:45px;background:#3a3a3a;border-radius:40px 40px 0 0;
+                   top:-35px;left:6px;}
+
+/* Female Tiger - TIGER */
+.female-tiger{position:relative;transform:scale(0.7);}
+.female-tiger .head{width:100px;height:120px;background:linear-gradient(135deg,#ff9944,#ffbb66);
+                    border-radius:50% 50% 45% 45%;position:relative;}
+.female-tiger .long-hair{position:absolute;width:65px;height:95px;background:#ff8833;top:-8px;left:17px;
+                         border-radius:32px;z-index:-1;}
+.female-tiger .stripe{position:absolute;background:#2d2d2d;border-radius:8px;}
+.female-tiger .stripe1{width:25px;height:3px;top:30px;left:12px;transform:rotate(-15deg);}
+.female-tiger .stripe2{width:25px;height:3px;top:30px;right:12px;transform:rotate(15deg);}
+.female-tiger .stripe3{width:20px;height:3px;top:42px;left:8px;transform:rotate(-10deg);}
+.female-tiger .stripe4{width:20px;height:3px;top:42px;right:8px;transform:rotate(10deg);}
+.female-tiger .ear{position:absolute;width:25px;height:35px;background:inherit;border-radius:50%;
+                   top:35px;filter:brightness(0.9);}
+.female-tiger .ear.left{left:-8px;transform:rotate(-15deg);}
+.female-tiger .ear.right{right:-8px;transform:rotate(15deg);}
+.female-tiger .eye{position:absolute;width:15px;height:15px;background:white;border-radius:50%;top:50px;}
+.female-tiger .eye.left{left:20px;}
+.female-tiger .eye.right{right:20px;}
+.female-tiger .pupil{position:absolute;width:8px;height:8px;background:#1a1a1a;border-radius:50%;top:3px;left:3px;}
+.female-tiger .nose{position:absolute;width:20px;height:15px;background:#2d2d2d;border-radius:50%;bottom:25px;left:40px;}
+.female-tiger .leather-jacket{width:88px;height:82px;background:#1a1a1a;margin:-8px auto 0;border-radius:8px 8px 0 0;
+                              position:relative;border:2px solid #444;}
+.female-tiger .zipper{position:absolute;width:2px;height:55px;background:#888;left:50%;top:15px;transform:translateX(-50%);}
+
+/* ───────────────── ② 楽曲カード 横並び 16:9 ───────────────── */
+.songs-list{list-style:none;margin-top:2rem;}
+.song-item{display:flex;flex-direction:column;gap:1rem;background:rgba(255,255,255,.05);
+           padding:1rem;margin-bottom:1rem;border-radius:10px;border-left:4px solid #4ecdc4;transition:.3s;}
+.song-item:hover{background:rgba(78,205,196,.1);transform:translateX(10px);}
+
+/* thumbnail */
+.thumbnail{position:relative;flex-shrink:0;width:100%;}
+.thumbnail img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:10px;}
+
+/* ③ 再生アイコンオーバーレイ */
+.play-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+           width:60px;height:60px;border-radius:50%;background:rgba(0,0,0,.6);
+           display:flex;align-items:center;justify-content:center;font-size:2rem;pointer-events:none;}
+
+.song-text{font-size:1rem;line-height:1.6;}
+
+@media(min-width:768px){
+   .song-item{flex-direction:row;align-items:center;}
+   .thumbnail{width:240px;}
+}
+
+/* ───────────────── SNS ───────────────── */
+.social-links{display:flex;justify-content:center;gap:2rem;margin-top:2rem;}
+.social-link{width:60px;height:60px;border-radius:50%;
+             background:linear-gradient(45deg,#ff6b6b,#4ecdc4);
+             display:flex;align-items:center;justify-content:center;font-size:1.5rem;
+             color:#fff;text-decoration:none;transition:.3s;}
+.social-link:hover{transform:scale(1.2);box-shadow:0 10px 30px rgba(78,205,196,.3);}
+
+/* ───────────────── フッター ───────────────── */
+footer{background:#000;padding:2rem;text-align:center;margin-top:5rem;}
+
+/* ───────────────── アニメーション ───────────────── */
+@keyframes glow{0%{text-shadow:0 0 10px rgba(78,205,196,.5);}
+                100%{text-shadow:0 0 20px rgba(78,205,196,.8),0 0 30px rgba(255,107,107,.5);}}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
+@keyframes float{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-20px) rotate(180deg);}}
+
+/* ───────────────── レスポンシブ（ナビ） ───────────────── */
+@media(max-width:768px){
+  .hero h1{font-size:3rem;}
+  .nav-links{display:none;} /* ハンバーガー未実装の場合は非表示 */
+  .members-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+
+<body>
+<!-- ナビゲーション -->
+<nav>
+ <div class="nav-container">
+   <div class="logo">Boostar</div>
+   <ul class="nav-links">
+     <li><a href="#home">Home</a></li>
+     <li><a href="#about">About</a></li>
+     <li><a href="#members">Members</a></li>
+     <li><a href="#music">Music</a></li>
+     <li><a href="#contact">Contact</a></li>
+   </ul>
+ </div>
+</nav>
+
+<!-- ヒーロー -->
+<section id="home" class="hero">
+ <div class="floating-shapes">
+   <div class="shape"></div><div class="shape"></div><div class="shape"></div>
+ </div>
+ <div class="hero-content">
+   <h1>Boostar</h1>
+   <p>音楽で世界を変える新星バンド</p>
+   <a href="#music" class="cta-button">今すぐ聴く</a>
+ </div>
+</section>
+
+<!-- About -->
+<section id="about" class="section">
+ <h2>About Boostar</h2>
+ <p style="text-align:center;font-size:1.2rem;line-height:1.8;opacity:.9;max-width:800px;margin:0 auto;">
+   Boostarは、革新的なサウンドと心に響くメッセージで<br>
+   音楽シーンに新たな風を吹き込むバンドです。<br>
+   ジャンルの枠を超えた音楽表現で、リスナーの心を高揚させ、<br>
+   日常に特別な瞬間をお届けします。<br>
+   私たちの音楽は、夢を追いかけるすべての人へのエールです。
+ </p>
+</section>
+
+<!-- Members -->
+<section id="members" class="section">
+ <h2>Members</h2>
+ <div class="members-grid">
+   <!-- BULL - Vocals -->
+   <div class="member-card">
+     <div class="member-avatar">
+       <div class="red-cow">
+         <div class="head">
+           <div class="mohawk"></div>
+           <div class="horn left"></div>
+           <div class="horn right"></div>
+           <div class="ear left"></div>
+           <div class="ear right"></div>
+           <div class="eye left"><div class="pupil"></div></div>
+           <div class="eye right"><div class="pupil"></div></div>
+           <div class="nose"></div>
+         </div>
+         <div class="jacket"></div>
+       </div>
+     </div>
+     <h3>BULL</h3>
+     <p class="member-role">Vocals</p>
+     <p>情熱的な赤い牛。<br>パワフルなボーカルと熱いパフォーマンスで<br>バンドを牽引するフロントマン。</p>
+   </div>
+   
+   <!-- SPOTS - Guitar -->
+   <div class="member-card">
+     <div class="member-avatar">
+       <div class="holstein">
+         <div class="head">
+           <div class="spot spot1"></div>
+           <div class="spot spot2"></div>
+           <div class="spot spot3"></div>
+           <div class="glasses">
+             <div class="lens left"></div>
+             <div class="bridge"></div>
+             <div class="lens right"></div>
+           </div>
+           <div class="ear left"></div>
+           <div class="ear right"></div>
+           <div class="eye left"><div class="pupil"></div></div>
+           <div class="eye right"><div class="pupil"></div></div>
+           <div class="nose"></div>
+         </div>
+         <div class="cardigan">
+           <div class="button button1"></div>
+           <div class="button button2"></div>
+         </div>
+       </div>
+     </div>
+     <h3>SPOTS</h3>
+     <p class="member-role">Guitar</p>
+     <p>知的なホルスタイン。<br>メガネがトレードマークの音楽理論派。<br>革新的なギターサウンドを生み出す。</p>
+   </div>
+   
+   <!-- SHADOW - Bass -->
+   <div class="member-card">
+     <div class="member-avatar">
+       <div class="black-sheep">
+         <div class="head">
+           <div class="wool wool1"></div>
+           <div class="wool wool2"></div>
+           <div class="wool wool3"></div>
+           <div class="wool wool4"></div>
+           <div class="wool wool5"></div>
+           <div class="ear left"></div>
+           <div class="ear right"></div>
+           <div class="eye left"><div class="pupil"></div></div>
+           <div class="eye right"><div class="pupil"></div></div>
+           <div class="nose"></div>
+         </div>
+         <div class="hoodie">
+           <div class="hood"></div>
+         </div>
+       </div>
+     </div>
+     <h3>SHADOW</h3>
+     <p class="member-role">Bass</p>
+     <p>ミステリアスな黒羊。<br>重低音を操り、バンドの土台を支える影の実力者。<br>クールな佇まいが魅力。</p>
+   </div>
+   
+   <!-- TIGER - Drums -->
+   <div class="member-card">
+     <div class="member-avatar">
+       <div class="female-tiger">
+         <div class="head">
+           <div class="long-hair"></div>
+           <div class="stripe stripe1"></div>
+           <div class="stripe stripe2"></div>
+           <div class="stripe stripe3"></div>
+           <div class="stripe stripe4"></div>
+           <div class="ear left"></div>
+           <div class="ear right"></div>
+           <div class="eye left"><div class="pupil"></div></div>
+           <div class="eye right"><div class="pupil"></div></div>
+           <div class="nose"></div>
+         </div>
+         <div class="leather-jacket">
+           <div class="zipper"></div>
+         </div>
+       </div>
+     </div>
+     <h3>TIGER</h3>
+     <p class="member-role">Drums</p>
+     <p>野性的な雌虎。<br>圧倒的なテクニックと破壊力でリズムを刻む。<br>レザージャケットがトレードマーク。</p>
+   </div>
+ </div>
+</section>
+
+<!-- Music -->
+<section id="music" class="section">
+ <h2>Music</h2>
+ <ul class="songs-list">
+
+  <!-- 1 -->
+  <li class="song-item">
+   <a href="https://www.youtube.com/watch?v=AUliMAgZUqQ" target="_blank" class="thumbnail">
+     <img src="https://img.youtube.com/vi/AUliMAgZUqQ/hqdefault.jpg" alt="モーニングブースター">
+     <span class="play-icon">▶</span>
+   </a>
+   <div class="song-text">
+     <strong>モーニングブースター</strong><br>
+     <small>朝をブーストする爽快チューン！一日のスタートを加速させる元気な一曲</small>
+   </div>
+  </li>
+
+  <!-- 2 -->
+  <li class="song-item">
+   <a href="https://youtu.be/TMj4Vf12f1w?si=lKQ0DGCcg4IosyaH" target="_blank" class="thumbnail">
+     <img src="https://img.youtube.com/vi/TMj4Vf12f1w/hqdefault.jpg" alt="LUNCH RUSH RIOT">
+     <span class="play-icon">▶</span>
+   </a>
+   <div class="song-text">
+     <strong>LUNCH RUSH RIOT</strong><br>
+     <small>ランチタイムのパワフルなエネルギーチャージ！午後への活力を注入する爆発的な一曲</small>
+   </div>
+  </li>
+
+  <!-- 3 -->
+  <li class="song-item">
+   <a href="https://www.youtube.com/watch?v=iyL5StoayYk" target="_blank" class="thumbnail">
+     <img src="https://img.youtube.com/vi/iyL5StoayYk/hqdefault.jpg" alt="Siesta Breaker">
+     <span class="play-icon">▶</span>
+   </a>
+   <div class="song-text">
+     <strong>Siesta Breaker</strong><br>
+     <small>午後の眠気を吹き飛ばすスパイシーサウンド！</small>
+   </div>
+  </li>
+
+  <!-- 4 -->
+  <li class="song-item">
+   <a href="https://www.youtube.com/watch?v=HpozB3TM30w" target="_blank" class="thumbnail">
+     <img src="https://img.youtube.com/vi/HpozB3TM30w/hqdefault.jpg" alt="フルスロットル">
+     <span class="play-icon">▶</span>
+   </a>
+   <div class="song-text">
+     <strong>フルスロットル</strong><br>
+     <small>アクセル全開で駆け抜ける爽快ロックナンバー</small>
+   </div>
+  </li>
+
+  <!-- 5 -->
+  <li class="song-item">
+   <a href="https://www.youtube.com/watch?v=5R7jL7fiIG0" target="_blank" class="thumbnail">
+     <img src="https://img.youtube.com/vi/5R7jL7fiIG0/hqdefault.jpg" alt="放課後フルスイング">
+     <span class="play-icon">▶</span>
+   </a>
+   <div class="song-text">
+     <strong>放課後フルスイング</strong><br>
+     <small>放課後のグラウンドに響く青春の一撃！</small>
+   </div>
+  </li>
+
+  <!-- 6 -->
+  <li class="song-item">
+   <a href="https://www.youtube.com/watch?v=ilEoN7aEqA8" target="_blank" class="thumbnail">
+     <img src="https://img.youtube.com/vi/ilEoN7aEqA8/hqdefault.jpg" alt="バスタブダイブ">
+     <span class="play-icon">▶</span>
+   </a>
+   <div class="song-text">
+     <strong>バスタブダイブ</strong><br>
+     <small>湯気の中でリラックス＆ダイブするドリーミーポップ</small>
+   </div>
+  </li>
+
+  <!-- 7 -->
+  <li class="song-item">
+   <a href="https://www.youtube.com/watch?v=SADYrQVPEgI" target="_blank" class="thumbnail">
+     <img src="https://img.youtube.com/vi/SADYrQVPEgI/hqdefault.jpg" alt="ハードコードの子守歌">
+     <span class="play-icon">▶</span>
+   </a>
+   <div class="song-text">
+     <strong>ハードコードの子守歌</strong><br>
+     <small>ハードなビートで眠りに誘うアンビバレントな一曲</small>
+   </div>
+  </li>
+
+ </ul>
+</section>
+
+<!-- Contact -->
+<section id="contact" class="section">
+ <h2>Contact</h2>
+ <p style="text-align:center;margin-bottom:2rem;">ライブ出演やコラボレーションのお問い合わせはこちら</p>
+ <div class="social-links">
+   <a href="#" class="social-link" aria-label="Email">📧</a>
+   <a href="#" class="social-link" aria-label="X (Twitter)">🐦</a>
+   <a href="#" class="social-link" aria-label="Instagram">📱</a>
+   <a href="#" class="social-link" aria-label="Spotify">🎵</a>
+ </div>
+</section>
+
+<!-- フッター -->
+<footer>
+ <p>&copy; 2025 Boostar. All rights reserved.</p>
+ <p>音楽で世界をブーストする</p>
+</footer>
+
+<!-- ───────────────── JS ───────────────── -->
+<script>
+/* スムーススクロール */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+ a.addEventListener('click',e=>{
+  e.preventDefault();
+  const t=document.querySelector(a.getAttribute('href'));
+  if(t)t.scrollIntoView({behavior:'smooth',block:'start'});
+ });
+});
+
+/* 浮遊パーティクル */
+function createParticle(){
+ const p=document.createElement('div');
+ p.style.cssText='position:fixed;width:4px;height:4px;background:rgba(78,205,196,.6);border-radius:50%;pointer-events:none;z-index:1;';
+ p.style.left=Math.random()*innerWidth+'px';
+ p.style.top=innerHeight+'px';
+ document.body.appendChild(p);
+ const anim=p.animate([{transform:'translateY(0)',opacity:1},{transform:`translateY(-${innerHeight+100}px)`,opacity:0}],
+                      {duration:Math.random()*3000+2000,easing:'linear'});
+ anim.onfinish=()=>p.remove();
+}
+setInterval(createParticle,300);
+
+/* ナビ背景濃淡 */
+window.addEventListener('scroll',()=>{
+ document.querySelector('nav').style.background=scrollY>50?'rgba(0,0,0,.95)':'rgba(0,0,0,.9)';
+});
+
+/* メンバーカード hover 色戻し */
+document.querySelectorAll('.member-card').forEach(c=>{
+ c.addEventListener('mouseenter',()=>c.style.background='rgba(78,205,196,.1)');
+ c.addEventListener('mouseleave',()=>c.style.background='rgba(255,255,255,.05)');
+});
+</script>
+</body>
 </html>
